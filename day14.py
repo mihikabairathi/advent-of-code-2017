@@ -1,4 +1,3 @@
-from hmac import new
 import day10
 
 def row_binary_count_used(input_string, row_num):
