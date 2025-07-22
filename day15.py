@@ -16,9 +16,9 @@ def count_matches(gen1, gen2):
         while gen2 % 8 != 0 or old_gen2 == gen2:
             gen2 = (gen2 * 48271) % 2147483647
 
-        low_bin1 = get_lowest_16_binary(gen1)
-        low_bin2 = get_lowest_16_binary(gen2)
-        if low_bin1 == low_bin2:
+        # Use bitwise operations instead of string conversion for performance
+        # Get lowest 16 bits using bitwise AND with 0xFFFF (65535)
+        if (gen1 & 0xFFFF) == (gen2 & 0xFFFF):
             count += 1
 
     return count
