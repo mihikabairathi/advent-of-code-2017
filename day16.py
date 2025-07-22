@@ -24,20 +24,28 @@ def perform_dance(programs, instructions):
 
 def simulate_dances(filename, times=1000000000):
     instructions = get_instructions(filename)
-    seen = dict()
+    seen = {}
     programs = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p']
+    MAX_ITERATIONS = 1000000  # Safety limit
 
     i = 0
-    while i < times:
+    while i < times and i < MAX_ITERATIONS:
         programs = perform_dance(programs, instructions)
-        prg_str = ''.join(programs)
+        prg_tuple = tuple(programs)
         
-        if prg_str in seen:
-            diff = i - seen[prg_str]
-            i += ((1000000000 - i)//diff)*diff + 1
+        if prg_tuple in seen:
+            cycle_length = i - seen[prg_tuple]
+            remaining = times - i - 1
+            if cycle_length > 0:
+                # Skip full cycles
+                i += (remaining // cycle_length) * cycle_length
         else:
-            seen[''.join(programs)] = i
-            i += 1
+            seen[prg_tuple] = i
+
+        i += 1
+
+    if i >= MAX_ITERATIONS:
+        raise Exception(f"Exceeded maximum iterations ({MAX_ITERATIONS}) without completing simulation")
 
     return ''.join(programs)
 

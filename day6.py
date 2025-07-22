@@ -15,19 +15,20 @@ def redistribute(banks):
 
 def num_redistributions(banks):
     # banks is a list of block counts
-    num_configs = 0
-    seen_configs = dict()
+    MAX_ITERATIONS = 1000000  # Safety limit
+    seen_configs = {}
     iteration = 0
 
-    while True:
-        config = ''.join([str(blocks) for blocks in banks])
+    while iteration < MAX_ITERATIONS:
+        # Use tuple of banks as key for faster lookup
+        config = tuple(banks)
         if config in seen_configs:
-            return iteration - seen_configs[config], num_configs
-        else:
-            num_configs += 1
-            seen_configs[config] = iteration
-            banks = redistribute(banks)
-            iteration += 1
+            return iteration - seen_configs[config], iteration
+        seen_configs[config] = iteration
+        banks = redistribute(banks)
+        iteration += 1
+
+    raise Exception(f"Exceeded maximum iterations ({MAX_ITERATIONS}) without finding a repeat")
 
 if __name__ == "__main__":
     print(num_redistributions([0, 2, 7, 0]))
